@@ -1,4 +1,10 @@
-import task_tracker.*;
+package task_tracker.controller;
+
+import task_tracker.model.Epic;
+import task_tracker.model.Progress;
+import task_tracker.model.SubTask;
+import task_tracker.model.Task;
+import task_tracker.service.TaskManager;
 
 public class Main {
     public static void main(String[] args) {
@@ -61,8 +67,10 @@ public class Main {
         System.out.println(taskManager.getEpicById(epic1.getId()));
 
         System.out.println("\n Удаление по Id: ");
-        taskManager.deleteEpicById(4);
+        taskManager.deleteEpicById(epic3.getId());
         System.out.println(taskManager.getEpicMap());
+        System.out.println(epic2.getSubTaskList());
+        System.out.println(epic3.getSubTaskList());
 
         System.out.println("\n Получить весь список: ");
         System.out.println(taskManager.getAllEpics());
@@ -97,13 +105,19 @@ public class Main {
         System.out.println("Число подзадач у Эпика 3  - " + epic3.getSubTaskList().size());
 
         System.out.println("\n Обновление подзадач: ");
-        taskManager.updateSubTask(subTask1.getId(), new SubTask("SubTask", "subtask-descr 5", Progress.IN_PROGRESS, epic1.getId()));
+        taskManager.updateSubTask(subTask1.getId(), new SubTask("SubTask", "subtask-change 5", Progress.DONE, epic1.getId()));
+        taskManager.updateSubTask(subTask2.getId(), new SubTask("SubTask", "subtask-change 5", Progress.NEW, epic2.getId()));
+        taskManager.updateSubTask(subTask2.getId(), new SubTask("SubTask", "subtask-change 5", Progress.DONE, epic2.getId()));
         System.out.println(taskManager.getSubTaskMap());
+        System.out.println(epic1.getStatus());
+        System.out.println(epic2.getStatus());
 
         System.out.println("\n Поиск по Id: ");
         System.out.println(taskManager.getSubTaskById(7));
 
         System.out.println("\n Вывести все подзадачи Epic: ");
+        System.out.println(taskManager.getAllSubtaskByEpic(epic1));
+        System.out.println(taskManager.getAllSubtaskByEpic(epic2));
         System.out.println(taskManager.getAllSubtaskByEpic(epic3));
 
         System.out.println("\n Изменить статус Epic: ");

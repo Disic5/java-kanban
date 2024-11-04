@@ -1,4 +1,4 @@
-package task_tracker;
+package task_tracker.model;
 
 public class SubTask extends Task {
     private final Integer epicId;

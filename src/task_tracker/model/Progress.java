@@ -1,4 +1,4 @@
-package task_tracker;
+package task_tracker.model;
 
 public enum Progress {
     NEW,

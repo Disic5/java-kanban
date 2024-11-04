@@ -1,4 +1,4 @@
-package task_tracker;
+package task_tracker.model;
 
 import java.util.ArrayList;
 import java.util.List;
