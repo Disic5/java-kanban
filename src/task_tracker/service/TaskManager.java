@@ -140,11 +140,7 @@ public class TaskManager {
     }
 
     public void deleteSubTaskById(Integer id) {
-        if (subTaskMap.containsKey(id)) {
             subTaskMap.remove(id);
-        } else {
-            System.out.println("Не верный Id");
-        }
     }
 
     public List<SubTask> getAllSubTasks() {
