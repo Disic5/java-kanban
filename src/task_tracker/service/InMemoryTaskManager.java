@@ -53,8 +53,10 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public Task getTaskById(Integer id) {
         if (id != null && taskMap.containsKey(id)) {
-            List<Task> history = removeOldHistory();
-            history.add(taskMap.get(id));
+//            List<Task> history = removeOldHistory();
+//            List<Task> history = Managers.getDefaultHistory().getHistory();
+            Managers.getDefaultHistory().add(taskMap.get(id));
+//            history.add(taskMap.get(id));
             return taskMap.get(id);
         } else {
             throw new IllegalArgumentException("task not found with id = " + id);
@@ -113,17 +115,6 @@ public class InMemoryTaskManager implements TaskManager {
         for (SubTask subtaskId : epic.getSubTaskList()) {
             subTaskMap.remove(subtaskId.getId());
         }
-
-//        for(SubTask subTask : subTaskMap.values()){
-//            Integer epicId = subTask.getEpicId();
-//            epic.getSubTaskList().remove()
-//            subTask.getEpicId();
-//        }
-//        epicMap.get(subtask.getEpicId());
-//        epic.getSubTaskList().remove(subtask);
-
-
-
     }
 
     @Override
@@ -134,8 +125,10 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public Epic getEpicById(Integer id) {
         if (id != null && epicMap.containsKey(id)) {
-            List<Task> history = removeOldHistory();
-            history.add(epicMap.get(id));
+//            List<Task> history = removeOldHistory();
+//            List<Task> history = Managers.getDefaultHistory().getHistory();
+//            history.add(epicMap.get(id));
+            Managers.getDefaultHistory().add(epicMap.get(id));
             return epicMap.get(id);
         } else {
             throw new IllegalArgumentException("epic not found with id = " + id);
@@ -193,8 +186,10 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public SubTask getSubTaskById(Integer id) {
         if (id != null) {
-            List<Task> history = removeOldHistory();
-            history.add(subTaskMap.get(id));
+//            List<Task> history = removeOldHistory();
+//            List<Task> history = Managers.getDefaultHistory().getHistory();
+//            history.add(subTaskMap.get(id));
+            Managers.getDefaultHistory().add(subTaskMap.get(id));
             return subTaskMap.get(id);
         } else {
             throw new IllegalArgumentException("subtask not found with id = " + id);
