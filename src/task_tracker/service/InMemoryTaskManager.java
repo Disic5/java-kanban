@@ -52,7 +52,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Task getTaskById(Integer id) {
-        if (id != null) {
+        if (id != null && taskMap.containsKey(id)) {
             List<Task> history = removeOldHistory();
             history.add(taskMap.get(id));
             return taskMap.get(id);
@@ -114,6 +114,16 @@ public class InMemoryTaskManager implements TaskManager {
             subTaskMap.remove(subtaskId.getId());
         }
 
+//        for(SubTask subTask : subTaskMap.values()){
+//            Integer epicId = subTask.getEpicId();
+//            epic.getSubTaskList().remove()
+//            subTask.getEpicId();
+//        }
+//        epicMap.get(subtask.getEpicId());
+//        epic.getSubTaskList().remove(subtask);
+
+
+
     }
 
     @Override
@@ -123,7 +133,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Epic getEpicById(Integer id) {
-        if (id != null) {
+        if (id != null && epicMap.containsKey(id)) {
             List<Task> history = removeOldHistory();
             history.add(epicMap.get(id));
             return epicMap.get(id);
