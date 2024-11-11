@@ -6,14 +6,13 @@ import task_tracker.service.InMemoryTaskManager;
 import task_tracker.service.TaskManager;
 
 public class Managers {
-    private final static InMemoryHistoryManager historyManager = new InMemoryHistoryManager();
-//    private final  InMemoryTaskManager taskManager = new InMemoryTaskManager();
+    private final static HistoryManager historyManager = new InMemoryHistoryManager();
 
     public static TaskManager getDefault() {
         return new InMemoryTaskManager();
     }
 
-    public static HistoryManager getDefaultHistory(){
+    public static HistoryManager getDefaultHistory() {
         return historyManager;
     }
 }

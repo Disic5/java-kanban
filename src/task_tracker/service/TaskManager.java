@@ -48,9 +48,9 @@ public interface TaskManager {
 
     void deleteAllSubTasks();
 
-    public Map<Integer, Task> getTaskMap();
+    Map<Integer, Task> getTaskMap();
 
-    public Map<Integer, Epic> getEpicMap();
+    Map<Integer, Epic> getEpicMap();
 
-    public Map<Integer, SubTask> getSubTaskMap();
+    Map<Integer, SubTask> getSubTaskMap();
 }

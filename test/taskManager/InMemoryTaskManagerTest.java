@@ -1,9 +1,8 @@
 package taskManager;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.BeforeEach;
-import task_tracker.history.HistoryManager;
 import task_tracker.model.Epic;
 import task_tracker.model.Progress;
 import task_tracker.model.SubTask;
@@ -12,16 +11,13 @@ import task_tracker.service.TaskManager;
 import task_tracker.utils.Managers;
 
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static task_tracker.model.Progress.IN_PROGRESS;
-import static task_tracker.model.Progress.NEW;
+import static task_tracker.model.Progress.*;
 
 
 class InMemoryTaskManagerTest {
     private TaskManager taskManager;
-    private HistoryManager historyManager;
     private Task task;
     private Epic epic;
     private SubTask subTask;
@@ -32,7 +28,6 @@ class InMemoryTaskManagerTest {
         epic = new Epic("Test", "test");
         subTask = new SubTask("Test", "test", Progress.NEW, 1);
         taskManager = Managers.getDefault();
-        historyManager = Managers.getDefaultHistory();
     }
 
     @DisplayName("Успешное создание задачи")
@@ -96,8 +91,9 @@ class InMemoryTaskManagerTest {
         assertEquals(1, taskManager.getTaskMap().size(), "Неверное количество задач.");
     }
 
+    @DisplayName("Показать все задачи")
     @Test
-    void getAllTasks() {
+    void getAllTasks_shouldReturnAllTask() {
         initializeTasks();
         List<Task> allTasks = taskManager.getAllTasks();
 
@@ -106,8 +102,9 @@ class InMemoryTaskManagerTest {
     }
 
 
+    @DisplayName("Успешное удаление всех задач")
     @Test
-    void deleteAllTasks() {
+    void deleteAllTasks_shouldDeleteAllTask() {
         initializeTasks();
         taskManager.deleteAllTasks();
         assertTrue(taskManager.getTaskMap().isEmpty(), "Задачи не удалились");
@@ -142,12 +139,27 @@ class InMemoryTaskManagerTest {
         assertEquals(epic, epics.get(0), "Задачи не совпадают.");
     }
 
+    @DisplayName("Успешное обновление Epic")
     @Test
-    void updateEpic() {
+    void updateEpic_shouldBeUpdate() {
+        taskManager.addNewEpic(epic);
+        Epic epic2 = new Epic("Test", "update epic");
+        taskManager.updateEpic(1, epic2);
+        Epic updatedEpic = taskManager.getEpicById(1);
+
+        assertEquals(updatedEpic, epic2);
     }
 
+    @DisplayName("Успешное удаление всех Epic и Subtask")
     @Test
     void deleteAllEpics() {
+        taskManager.addNewEpic(epic);
+        taskManager.addNewSubTask(subTask);
+        taskManager.deleteAllEpics();
+
+        assertTrue(epic.getSubTaskList().isEmpty());
+        assertTrue(taskManager.getSubTaskMap().isEmpty(), "Подзадачи не удалились");
+        assertTrue(taskManager.getEpicMap().isEmpty(), "Задачи не удалились");
     }
 
     @DisplayName("Успешное удаление epic по id")
@@ -162,13 +174,19 @@ class InMemoryTaskManagerTest {
 
         SubTask subtask = taskManager.getSubTaskMap().get(subTask.getId());
 
-//        assertTrue(subTaskList.isEmpty());
+        assertTrue(subTaskList.isEmpty());
         assertNull(subtask);
         assertEquals(0, taskManager.getEpicMap().size());
     }
 
+    @DisplayName("Успешное получение списка всех Epic")
     @Test
     void getAllEpics() {
+        taskManager.addNewEpic(epic);
+        List<Epic> allEpics = taskManager.getAllEpics();
+
+        assertNotNull(allEpics);
+        assertEquals(1, allEpics.size());
     }
 
     @DisplayName("Успешный поиск Epic по id")
@@ -197,41 +215,139 @@ class InMemoryTaskManagerTest {
                 "epic not found with id = " + idNotExist);
     }
 
+    @DisplayName("Успешное обновление статуса у Epic на статус NEW")
     @Test
-    void updateEpicStatus() {
+    void updateEpicStatus_whenSubtaskChangeStatus_shouldUpdateStatusNew() {
+        epic.setStatus(IN_PROGRESS);
+        taskManager.addNewEpic(epic);
+        taskManager.addNewSubTask(subTask);
+        taskManager.updateEpicStatus(epic);
+
+        assertEquals(NEW, epic.getStatus());
     }
 
+    @DisplayName("Успешное обновление статуса у Epic на статус DONE")
+    @Test
+    void updateEpicStatus_whenSubtaskChangeStatus_shouldUpdateStatusDone() {
+        epic.setStatus(NEW);
+        taskManager.addNewEpic(epic);
+        subTask.setStatus(DONE);
+        taskManager.addNewSubTask(subTask);
+        taskManager.updateEpicStatus(epic);
 
+        assertEquals(DONE, epic.getStatus());
+    }
+
+    @DisplayName("Успешное обновление статуса у Epic на статус IN_PROGRESS")
+    @Test
+    void updateEpicStatus_whenSubtaskChangeStatus_shouldUpdateStatusInProgress() {
+        epic.setStatus(NEW);
+        taskManager.addNewEpic(epic);
+        SubTask subTask2 = new SubTask("Test", "subtask2", NEW, epic.getId());
+        subTask.setStatus(DONE);
+        taskManager.addNewSubTask(subTask);
+        taskManager.addNewSubTask(subTask2);
+        taskManager.updateEpicStatus(epic);
+
+        assertEquals(IN_PROGRESS, epic.getStatus());
+    }
 
     /**
      * SUBTASK
      */
 
+    @DisplayName("Успешное создание подзадачи")
     @Test
-    void addNewSubTask() {
+    void addNewSubTask_whenEpicIsCreated_shouldAddSuccessfully() {
+        taskManager.addNewEpic(epic);
+        taskManager.addNewSubTask(subTask);
+        SubTask savedSubTask = taskManager.getSubTaskById(subTask.getId());
+
+        assertNotNull(savedSubTask, "Подзадача не найдена.");
+        assertEquals(subTask, savedSubTask, "Подзадачи не совпадают.");
+
+        final List<SubTask> subTasks = taskManager.getAllSubTasks();
+
+        assertNotNull(subTasks, "Задачи не возвращаются.");
+        assertEquals(1, subTasks.size(), "Неверное количество задач.");
+        assertEquals(subTask, subTasks.get(0), "Задачи не совпадают.");
     }
 
+    @DisplayName("Успешное получение всех подзадач у Эпика")
     @Test
-    void getAllSubtaskByEpic() {
+    void getAllSubtaskByEpic_whenEpicHasSubtask_ShouldReturnListSubtasks() {
+        taskManager.addNewEpic(epic);
+        taskManager.addNewSubTask(subTask);
+        List<SubTask> subTaskList = epic.getSubTaskList();
+
+        assertNotNull(subTaskList);
+        assertEquals(1, subTaskList.size());
+
     }
 
+    @DisplayName("Успешный поиск подзадачи по id")
     @Test
-    void getSubTaskById() {
+    void getSubTaskById_whenSubTaskExists_shouldReturnSubTask() {
+        taskManager.addNewEpic(epic);
+        taskManager.addNewSubTask(subTask);
+        SubTask subTaskById = taskManager.getSubTaskById(subTask.getId());
+
+        assertNotNull(subTaskById);
+        assertEquals(subTask, subTaskById);
     }
 
+    @DisplayName("Не удалось найти подзадачу по id")
     @Test
-    void updateSubTask() {
+    void getSubTaskById_whenTaskNotExistOrNull_shouldThrowException() {
+        Integer id = null;
+        int idNotExist = 100;
+
+        assertThrows(IllegalArgumentException.class,
+                () -> taskManager.getSubTaskById(id),
+                "subtask not found with id = " + id);
+
+        assertThrows(IllegalArgumentException.class,
+                () -> taskManager.getSubTaskById(idNotExist),
+                "subtask not found with id = " + idNotExist);
     }
 
+    @DisplayName("Успешное обновление подзадачи")
     @Test
-    void deleteSubTaskById() {
+    void updateSubTask_whenPutNewSubTask_shouldBeUpdated() {
+        SubTask newSubTask = new SubTask("Test", "Updated SubTask", IN_PROGRESS, epic.getId());
+        taskManager.updateSubTask(1, newSubTask);
+        SubTask subTaskById = taskManager.getSubTaskById(1);
+
+        assertEquals(newSubTask, subTaskById);
     }
 
+    @DisplayName("Успешное удаление подзадачи по id")
     @Test
-    void getAllSubTasks() {
+    void deleteSubTaskById_whenSubTaskIsExist_shouldDeleteId() {
+        taskManager.addNewEpic(epic);
+        taskManager.addNewSubTask(subTask);
+        taskManager.deleteSubTaskById(subTask.getId());
+
+        assertEquals(0, taskManager.getSubTaskMap().size());
     }
 
+    @DisplayName("Показать все подзадачи")
     @Test
-    void deleteAllSubTasks() {
+    void getAllSubTasks_shouldReturnAllSubTask() {
+        taskManager.addNewEpic(epic);
+        taskManager.addNewSubTask(subTask);
+        List<SubTask> allSubTasks = taskManager.getAllSubTasks();
+
+        assertNotNull(allSubTasks);
+        assertEquals(1, allSubTasks.size());
+    }
+
+    @DisplayName("Успешное удаление всех подзадач")
+    @Test
+    void deleteAllSubTasks_shouldDeleteAllSubTask() {
+        taskManager.addNewEpic(epic);
+        taskManager.addNewSubTask(subTask);
+        taskManager.deleteAllSubTasks();
+        assertTrue(taskManager.getSubTaskMap().isEmpty());
     }
 }
