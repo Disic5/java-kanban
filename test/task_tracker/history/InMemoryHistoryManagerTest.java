@@ -12,11 +12,10 @@ import task_tracker.utils.Managers;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static task_tracker.model.Progress.NEW;
 
 class InMemoryHistoryManagerTest {
-
     private HistoryManager historyManager;
     private TaskManager taskManager;
     private Task task;
@@ -30,10 +29,7 @@ class InMemoryHistoryManagerTest {
         task = new Task("Test", "Test", NEW);
         epic = new Epic("Test", "test");
         subTask = new SubTask("Test", "test", Progress.NEW, 1);
-         Managers.getDefaultHistory().getHistory().clear();
     }
-
-
 
     @DisplayName("Успешное добавление истории при вызову getId()")
     @Test
@@ -48,7 +44,7 @@ class InMemoryHistoryManagerTest {
         taskManager.getSubTaskById(subTask.getId());
         taskManager.getSubTaskById(subTask.getId());
 
-        assertEquals(6, historyManager.getHistory().size());
+        assertEquals(6, taskManager.getHistory().size());
     }
 
     @DisplayName("Размер списка истрории не привышает 10")

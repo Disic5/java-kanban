@@ -5,14 +5,13 @@ import task_tracker.model.SubTask;
 import task_tracker.model.Task;
 
 import java.util.List;
-import java.util.Map;
 
 public interface TaskManager {
     void addNewTask(Task task);
 
     Task getTaskById(Integer id);
 
-    void updateTask(Integer id, Task task);
+    void updateTask(Task task);
 
     void deleteTaskById(Integer id);
 
@@ -22,7 +21,7 @@ public interface TaskManager {
 
     void addNewEpic(Epic epic);
 
-    void updateEpic(Integer id, Epic epic);
+    void updateEpic(Epic epic);
 
     void deleteAllEpics();
 
@@ -40,7 +39,7 @@ public interface TaskManager {
 
     SubTask getSubTaskById(Integer id);
 
-    void updateSubTask(Integer id, SubTask subTask);
+    void updateSubTask(SubTask subTask);
 
     void deleteSubTaskById(Integer id);
 
@@ -48,9 +47,5 @@ public interface TaskManager {
 
     void deleteAllSubTasks();
 
-    Map<Integer, Task> getTaskMap();
-
-    Map<Integer, Epic> getEpicMap();
-
-    Map<Integer, SubTask> getSubTaskMap();
+    List<Task> getHistory();
 }

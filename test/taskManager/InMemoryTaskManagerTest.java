@@ -28,6 +28,7 @@ class InMemoryTaskManagerTest {
         epic = new Epic("Test", "test");
         subTask = new SubTask("Test", "test", Progress.NEW, 1);
         taskManager = Managers.getDefault();
+
     }
 
     @DisplayName("Успешное создание задачи")
@@ -75,11 +76,12 @@ class InMemoryTaskManagerTest {
     @Test
     void updateTask_whenPutNewTask_shouldBeUpdated() {
         initializeTasks();
-        Task newTask = new Task("Test", "Updated Task", IN_PROGRESS);
-        taskManager.updateTask(1, newTask);
+        task.setDescription("Updated Task");
+        task.setStatus(IN_PROGRESS);
+        taskManager.updateTask(task);
         Task taskById = taskManager.getTaskById(1);
 
-        assertEquals(newTask, taskById);
+        assertEquals(task, taskById);
     }
 
     @DisplayName("Успешное удаление задачи по id")
@@ -88,7 +90,7 @@ class InMemoryTaskManagerTest {
         initializeTasks();
         taskManager.deleteTaskById(task.getId());
 
-        assertEquals(1, taskManager.getTaskMap().size(), "Неверное количество задач.");
+        assertEquals(1, taskManager.getAllTasks().size(), "Неверное количество задач.");
     }
 
     @DisplayName("Показать все задачи")
@@ -107,7 +109,7 @@ class InMemoryTaskManagerTest {
     void deleteAllTasks_shouldDeleteAllTask() {
         initializeTasks();
         taskManager.deleteAllTasks();
-        assertTrue(taskManager.getTaskMap().isEmpty(), "Задачи не удалились");
+        assertTrue(taskManager.getAllTasks().isEmpty(), "Задачи не удалились");
     }
 
     private void initializeTasks() {
@@ -143,11 +145,11 @@ class InMemoryTaskManagerTest {
     @Test
     void updateEpic_shouldBeUpdate() {
         taskManager.addNewEpic(epic);
-        Epic epic2 = new Epic("Test", "update epic");
-        taskManager.updateEpic(1, epic2);
+        epic.setDescription("update epic");
+        taskManager.updateEpic(epic);
         Epic updatedEpic = taskManager.getEpicById(1);
 
-        assertEquals(updatedEpic, epic2);
+        assertEquals(updatedEpic, epic);
     }
 
     @DisplayName("Успешное удаление всех Epic и Subtask")
@@ -158,8 +160,8 @@ class InMemoryTaskManagerTest {
         taskManager.deleteAllEpics();
 
         assertTrue(epic.getSubTaskList().isEmpty());
-        assertTrue(taskManager.getSubTaskMap().isEmpty(), "Подзадачи не удалились");
-        assertTrue(taskManager.getEpicMap().isEmpty(), "Задачи не удалились");
+        assertTrue(taskManager.getAllSubTasks().isEmpty(), "Подзадачи не удалились");
+        assertTrue(taskManager.getAllEpics().isEmpty(), "Задачи не удалились");
     }
 
     @DisplayName("Успешное удаление epic по id")
@@ -172,11 +174,8 @@ class InMemoryTaskManagerTest {
         List<SubTask> subTaskList = epic.getSubTaskList();
         taskManager.deleteEpicById(epic.getId());
 
-        SubTask subtask = taskManager.getSubTaskMap().get(subTask.getId());
-
         assertTrue(subTaskList.isEmpty());
-        assertNull(subtask);
-        assertEquals(0, taskManager.getEpicMap().size());
+        assertEquals(0, taskManager.getAllEpics().size());
     }
 
     @DisplayName("Успешное получение списка всех Epic")
@@ -314,11 +313,15 @@ class InMemoryTaskManagerTest {
     @DisplayName("Успешное обновление подзадачи")
     @Test
     void updateSubTask_whenPutNewSubTask_shouldBeUpdated() {
-        SubTask newSubTask = new SubTask("Test", "Updated SubTask", IN_PROGRESS, epic.getId());
-        taskManager.updateSubTask(1, newSubTask);
+        taskManager.addNewEpic(epic);
+        taskManager.addNewSubTask(subTask);
+        subTask.setId(1);
+        subTask.setStatus(IN_PROGRESS);
+        subTask.setDescription("Updated SubTask");
+        taskManager.updateSubTask(subTask);
         SubTask subTaskById = taskManager.getSubTaskById(1);
 
-        assertEquals(newSubTask, subTaskById);
+        assertEquals(subTask, subTaskById);
     }
 
     @DisplayName("Успешное удаление подзадачи по id")
@@ -328,7 +331,7 @@ class InMemoryTaskManagerTest {
         taskManager.addNewSubTask(subTask);
         taskManager.deleteSubTaskById(subTask.getId());
 
-        assertEquals(0, taskManager.getSubTaskMap().size());
+        assertEquals(0, taskManager.getAllSubTasks().size());
     }
 
     @DisplayName("Показать все подзадачи")
@@ -348,6 +351,34 @@ class InMemoryTaskManagerTest {
         taskManager.addNewEpic(epic);
         taskManager.addNewSubTask(subTask);
         taskManager.deleteAllSubTasks();
-        assertTrue(taskManager.getSubTaskMap().isEmpty());
+        assertTrue(taskManager.getAllSubTasks().isEmpty());
+    }
+
+    @DisplayName("Поля нельзя изменять после создания")
+    @Test
+    void testTaskFieldsImmutability() {
+        Task task = new Task("Исходная задача", "Описание");
+        taskManager.addNewTask(task);
+
+        Task storedTask = taskManager.getTaskById(task.getId());
+        storedTask.setName("Измененное имя");
+
+        Task reFetchedTask = taskManager.getTaskById(task.getId());
+        assertEquals("Исходная задача", reFetchedTask.getName(),
+                "Имя задачи должно оставаться неизменным после изменения в другой ссылке");
+    }
+
+    @DisplayName("Задачи с разными ID не должны конфликтовать ")
+    @Test
+    void testGeneratedAndSpecifiedIdTasksConflict() {
+        Task generatedTask = new Task("Генерируемая задача", "Описание");
+        taskManager.addNewTask(generatedTask);
+
+        Task specifiedTask = new Task("Задача с ID", "Описание");
+        specifiedTask.setId(generatedTask.getId());
+        taskManager.addNewTask(specifiedTask);
+
+        assertNotEquals(generatedTask, specifiedTask,
+                "Задачи с разными ID не должны конфликтовать");
     }
 }

@@ -25,7 +25,6 @@ public class TaskTest {
         Task task1 = new Task("Test", "test", Progress.NEW);
         task1.setId(id);
 
-
         assertEquals(task1.getId(), task.getId(), "Экземпляры Task с одинаковым id должны быть равны");
     }
 }

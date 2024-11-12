@@ -10,7 +10,10 @@ public class Epic extends Task {
     public Epic(String name, String description) {
         super(name, description);
         subTaskList = new ArrayList<>();
-        this.setStatus(Progress.NEW);
+    }
+    public Epic(Epic copyEpic) {
+       super(copyEpic);
+       subTaskList = new ArrayList<>(copyEpic.subTaskList);
     }
 
 

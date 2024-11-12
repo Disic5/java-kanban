@@ -8,6 +8,11 @@ public class SubTask extends Task {
         this.epicId = epicId;
     }
 
+    public SubTask(SubTask copySubTask){
+        super(copySubTask);
+        this.epicId = copySubTask.epicId;
+    }
+
     public Integer getEpicId() {
         return epicId;
     }

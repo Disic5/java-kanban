@@ -24,7 +24,9 @@ public class Main {
         taskManager.addNewTask(task2);
         taskManager.addNewTask(task3);
 
-        taskManager.updateTask(task1.getId(), new Task("Task", "task-descr 5", Progress.IN_PROGRESS));
+        Task task = taskManager.getAllTasks().get(1);
+        task.setDescription("task-descr 5 update");
+        taskManager.updateTask(task);
 
         taskManager.getTaskById(3);
         taskManager.getTaskById(3);
@@ -43,7 +45,9 @@ public class Main {
         taskManager.addNewEpic(epic2);
         taskManager.addNewEpic(epic3);
 
-        taskManager.updateEpic(epic1.getId(), new Epic("Epic", "epic-descr 5"));
+        Epic epic = taskManager.getAllEpics().get(1);
+        epic.setDescription("epic-descr-update");
+        taskManager.updateEpic(epic);
 
         taskManager.getEpicById(epic1.getId());
         taskManager.getEpicById(epic1.getId());
@@ -67,8 +71,12 @@ public class Main {
         taskManager.addNewSubTask(subTask5);
         taskManager.addNewSubTask(subTask6);
 
-        taskManager.updateSubTask(subTask2.getId(), new SubTask("SubTask", "subtask-change 5", Progress.NEW, epic2.getId()));
-        taskManager.updateSubTask(subTask3.getId(), new SubTask("SubTask", "subtask-change 5", Progress.IN_PROGRESS, epic2.getId()));
+        SubTask subTask = taskManager.getAllSubTasks().get(1);
+        subTask.setStatus(Progress.NEW);
+        SubTask subTask7 = taskManager.getAllSubTasks().get(2);
+        subTask7.setStatus(Progress.IN_PROGRESS);
+        taskManager.updateSubTask(subTask);
+        taskManager.updateSubTask(subTask7);
 
         taskManager.getSubTaskById(7);
         taskManager.getSubTaskById(7);

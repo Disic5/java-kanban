@@ -4,7 +4,6 @@ import task_tracker.history.HistoryManager;
 import task_tracker.model.Epic;
 import task_tracker.model.SubTask;
 import task_tracker.model.Task;
-import task_tracker.utils.Managers;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,24 +21,10 @@ public class InMemoryTaskManager implements TaskManager {
 
     private final Map<Integer, Epic> epicMap = new HashMap<>();
 
-    private HistoryManager historyManager = Managers.getDefaultHistory();
+    private final HistoryManager historyManager;
 
-    /**
-     * Getters
-     */
-    @Override
-    public Map<Integer, Task> getTaskMap() {
-        return taskMap;
-    }
-
-    @Override
-    public Map<Integer, Epic> getEpicMap() {
-        return epicMap;
-    }
-
-    @Override
-    public Map<Integer, SubTask> getSubTaskMap() {
-        return subTaskMap;
+    public InMemoryTaskManager(HistoryManager historyManager) {
+        this.historyManager = historyManager;
     }
 
     /**
@@ -54,18 +39,17 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public Task getTaskById(Integer id) {
         if (id != null && taskMap.containsKey(id)) {
-            historyManager.add(taskMap.get(id));
-            return taskMap.get(id);
+            historyManager.add(new Task(taskMap.get(id)));
+            return new Task(taskMap.get(id));
         } else {
             throw new IllegalArgumentException("task not found with id = " + id);
         }
     }
 
     @Override
-    public void updateTask(Integer id, Task task) {
-        if (taskMap.containsKey(id)) {
-            task.setId(id);
-            taskMap.replace(id, task);
+    public void updateTask(Task task) {
+        if (taskMap.containsKey(task.getId())) {
+            taskMap.replace(task.getId(), task);
         }
     }
 
@@ -94,10 +78,9 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void updateEpic(Integer id, Epic epic) {
-        if (epicMap.containsKey(id)) {
-            epic.setId(id);
-            epicMap.put(id, epic);
+    public void updateEpic(Epic epic) {
+        if (epicMap.containsKey(epic.getId())) {
+            epicMap.put(epic.getId(), epic);
         }
     }
 
@@ -124,8 +107,8 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public Epic getEpicById(Integer id) {
         if (id != null && epicMap.containsKey(id)) {
-            historyManager.add(epicMap.get(id));
-            return epicMap.get(id);
+            historyManager.add(new Epic(epicMap.get(id)));
+            return new Epic(epicMap.get(id));
         } else {
             throw new IllegalArgumentException("epic not found with id = " + id);
         }
@@ -174,17 +157,15 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public SubTask getSubTaskById(Integer id) {
         if (id != null && subTaskMap.containsKey(id)) {
-            historyManager.add(subTaskMap.get(id));
-            return subTaskMap.get(id);
+            historyManager.add(new SubTask(subTaskMap.get(id)));
+            return new SubTask(subTaskMap.get(id));
         } else {
             throw new IllegalArgumentException("subtask not found with id = " + id);
         }
     }
 
-
     @Override
-    public void updateSubTask(Integer id, SubTask subTask) {
-        subTask.setId(id);
+    public void updateSubTask(SubTask subTask) {
         Integer subTaskId = subTask.getId();
         if (subTaskMap.containsKey(subTaskId)) {
             SubTask oldSubtask = subTaskMap.get(subTaskId);
@@ -194,8 +175,7 @@ public class InMemoryTaskManager implements TaskManager {
             newEpic.addSubTask(subTask);
             updateEpicStatus(newEpic);
         }
-        subTask.setId(id);
-        subTaskMap.put(id, subTask);
+        subTaskMap.put(subTaskId, subTask);
     }
 
     @Override
@@ -221,5 +201,10 @@ public class InMemoryTaskManager implements TaskManager {
             updateEpicStatus(epic);
         }
         subTaskMap.clear();
+    }
+
+    @Override
+    public List<Task> getHistory() {
+        return historyManager.getHistory();
     }
 }

@@ -8,8 +8,7 @@ import task_tracker.model.SubTask;
 import task_tracker.service.TaskManager;
 import task_tracker.utils.Managers;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class SubtaskTest {
 
@@ -35,10 +34,10 @@ public class SubtaskTest {
 
     @DisplayName("Subtask не может быть без Epic")
     @Test
-    void addSubtask_putSubtaskWithoutEpic_shouldBeFailed(){
+    void addSubtask_putSubtaskWithoutEpic_shouldBeFailed() {
         subTask.setId(1);
         taskManager.addNewSubTask(subTask);
 
-        assertTrue(taskManager.getSubTaskMap().isEmpty());
+        assertTrue(taskManager.getAllSubTasks().isEmpty());
     }
 }

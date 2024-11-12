@@ -17,6 +17,14 @@ public class Task {
     public Task(String name, String description) {
         this.name = name;
         this.description = description;
+        setStatus(Progress.NEW);
+    }
+
+    public Task(Task copyTask) {
+        this.id = copyTask.id;
+        this.name = copyTask.name;
+        this.description = copyTask.getDescription();
+        this.status = copyTask.getStatus();
     }
 
     public Integer getId() {
