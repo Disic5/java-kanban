@@ -1,4 +1,4 @@
-package task_tracker.model;
+package tasktracker.model;
 
 public class SubTask extends Task {
     private final Integer epicId;
@@ -8,7 +8,7 @@ public class SubTask extends Task {
         this.epicId = epicId;
     }
 
-    public SubTask(SubTask copySubTask){
+    public SubTask(SubTask copySubTask) {
         super(copySubTask);
         this.epicId = copySubTask.epicId;
     }

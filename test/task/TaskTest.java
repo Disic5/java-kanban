@@ -3,8 +3,8 @@ package task;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import task_tracker.model.Progress;
-import task_tracker.model.Task;
+import tasktracker.model.Progress;
+import tasktracker.model.Task;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

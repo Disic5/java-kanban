@@ -1,16 +1,16 @@
-package task_tracker.service;
+package tasktracker.service;
 
-import task_tracker.history.HistoryManager;
-import task_tracker.model.Epic;
-import task_tracker.model.SubTask;
-import task_tracker.model.Task;
+import tasktracker.history.HistoryManager;
+import tasktracker.model.Epic;
+import tasktracker.model.SubTask;
+import tasktracker.model.Task;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static task_tracker.model.Progress.*;
+import static tasktracker.model.Progress.*;
 
 public class InMemoryTaskManager implements TaskManager {
     private int idCounter = 0;
@@ -56,6 +56,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void deleteTaskById(Integer id) {
         taskMap.remove(id);
+        historyManager.remove(id);
     }
 
     @Override
@@ -93,6 +94,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void deleteEpicById(Integer id) {
         Epic epic = epicMap.remove(id);
+        historyManager.remove(id);
         for (SubTask subtaskId : epic.getSubTaskList()) {
             subTaskMap.remove(subtaskId.getId());
         }
@@ -181,6 +183,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void deleteSubTaskById(Integer id) {
         SubTask subtask = subTaskMap.remove(id);
+        historyManager.remove(id);
         if (subtask == null) {
             return;
         }

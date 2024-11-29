@@ -3,17 +3,17 @@ package taskManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import task_tracker.model.Epic;
-import task_tracker.model.Progress;
-import task_tracker.model.SubTask;
-import task_tracker.model.Task;
-import task_tracker.service.TaskManager;
-import task_tracker.utils.Managers;
+import tasktracker.model.Epic;
+import tasktracker.model.Progress;
+import tasktracker.model.SubTask;
+import tasktracker.model.Task;
+import tasktracker.service.TaskManager;
+import tasktracker.utils.Managers;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static task_tracker.model.Progress.*;
+import static tasktracker.model.Progress.*;
 
 
 class InMemoryTaskManagerTest {
@@ -84,13 +84,15 @@ class InMemoryTaskManagerTest {
         assertEquals(task, taskById);
     }
 
-    @DisplayName("Успешное удаление задачи по id")
+    @DisplayName("Успешное удаление задачи по id синхронно с историей")
     @Test
     void deleteTaskById_whenTaskIsExist_shouldDeleteId() {
         initializeTasks();
+        taskManager.getTaskById(task.getId());
         taskManager.deleteTaskById(task.getId());
 
         assertEquals(1, taskManager.getAllTasks().size(), "Неверное количество задач.");
+        assertTrue(taskManager.getHistory().isEmpty());
     }
 
     @DisplayName("Показать все задачи")
@@ -164,7 +166,7 @@ class InMemoryTaskManagerTest {
         assertTrue(taskManager.getAllEpics().isEmpty(), "Задачи не удалились");
     }
 
-    @DisplayName("Успешное удаление epic по id")
+    @DisplayName("Успешное удаление epic по id синхронно с историей")
     @Test
     void deleteEpicById() {
         taskManager.addNewEpic(epic);
@@ -172,10 +174,12 @@ class InMemoryTaskManagerTest {
         subTask.setId(1);
 
         List<SubTask> subTaskList = epic.getSubTaskList();
+        taskManager.getEpicById(epic.getId());
         taskManager.deleteEpicById(epic.getId());
 
         assertTrue(subTaskList.isEmpty());
         assertEquals(0, taskManager.getAllEpics().size());
+        assertTrue(taskManager.getHistory().isEmpty());
     }
 
     @DisplayName("Успешное получение списка всех Epic")
@@ -324,14 +328,16 @@ class InMemoryTaskManagerTest {
         assertEquals(subTask, subTaskById);
     }
 
-    @DisplayName("Успешное удаление подзадачи по id")
+    @DisplayName("Успешное удаление подзадачи по id синхронно с историей")
     @Test
     void deleteSubTaskById_whenSubTaskIsExist_shouldDeleteId() {
         taskManager.addNewEpic(epic);
         taskManager.addNewSubTask(subTask);
+        taskManager.getSubTaskById(subTask.getId());
         taskManager.deleteSubTaskById(subTask.getId());
 
         assertEquals(0, taskManager.getAllSubTasks().size());
+        assertTrue(taskManager.getHistory().isEmpty());
     }
 
     @DisplayName("Показать все подзадачи")
