@@ -59,11 +59,14 @@ public class Main {
          * Удаляем задачу, и поверяем что она удалилась из истории тоже
          * */
         taskManager.deleteTaskById(1);
+        taskManager.deleteAllTasks();
 
         /**
          * Удаляем Эпик, и поверяем что она удалились его подзадачи
          * */
         taskManager.deleteEpicById(epic3.getId());
+        taskManager.deleteAllEpics();
+
         printAllTasks(taskManager);
 
     }

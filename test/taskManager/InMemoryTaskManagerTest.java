@@ -110,8 +110,11 @@ class InMemoryTaskManagerTest {
     @Test
     void deleteAllTasks_shouldDeleteAllTask() {
         initializeTasks();
+        taskManager.getTaskById(1);
+        taskManager.getTaskById(2);
         taskManager.deleteAllTasks();
         assertTrue(taskManager.getAllTasks().isEmpty(), "Задачи не удалились");
+        assertTrue(taskManager.getHistory().isEmpty());
     }
 
     private void initializeTasks() {
@@ -157,13 +160,20 @@ class InMemoryTaskManagerTest {
     @DisplayName("Успешное удаление всех Epic и Subtask")
     @Test
     void deleteAllEpics() {
+        Epic epic2 = new Epic("test", "test");
+        epic2.setId(2);
         taskManager.addNewEpic(epic);
+        taskManager.addNewEpic(epic2);
         taskManager.addNewSubTask(subTask);
+        subTask.setId(1);
+        taskManager.getEpicById(epic.getId());
+        taskManager.getEpicById(epic2.getId());
         taskManager.deleteAllEpics();
 
         assertTrue(epic.getSubTaskList().isEmpty());
         assertTrue(taskManager.getAllSubTasks().isEmpty(), "Подзадачи не удалились");
         assertTrue(taskManager.getAllEpics().isEmpty(), "Задачи не удалились");
+        assertTrue(taskManager.getHistory().isEmpty());
     }
 
     @DisplayName("Успешное удаление epic по id синхронно с историей")
@@ -354,10 +364,19 @@ class InMemoryTaskManagerTest {
     @DisplayName("Успешное удаление всех подзадач")
     @Test
     void deleteAllSubTasks_shouldDeleteAllSubTask() {
+        SubTask subTask2 = new SubTask("Test", "test", Progress.NEW, 1);
+        subTask2.setId(2);
         taskManager.addNewEpic(epic);
         taskManager.addNewSubTask(subTask);
+        taskManager.addNewSubTask(subTask2);
+        taskManager.getSubTaskById(subTask.getId());
+        taskManager.getSubTaskById(subTask2.getId());
+        int size = taskManager.getHistory().size();
+
+        assertEquals(2, size);
         taskManager.deleteAllSubTasks();
         assertTrue(taskManager.getAllSubTasks().isEmpty());
+        assertTrue(taskManager.getHistory().isEmpty());
     }
 
     @DisplayName("Поля нельзя изменять после создания")

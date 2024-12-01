@@ -8,7 +8,37 @@ public class InMemoryHistoryManager implements HistoryManager {
     private final Map<Integer, Node<Task>> indexHistoryMap = new HashMap<>();
     private Node<Task> tail;
     private Node<Task> head;
-    private int size;
+
+    static class Node<E> {
+        private final E data;
+        private Node<E> next;
+        private Node<E> prev;
+
+        public Node(E data) {
+            this.data = data;
+
+        }
+
+        public E getData() {
+            return data;
+        }
+
+        public Node<E> getPrev() {
+            return prev;
+        }
+
+        public void setPrev(Node<E> prev) {
+            this.prev = prev;
+        }
+
+        public Node<E> getNext() {
+            return next;
+        }
+
+        public void setNext(Node<E> next) {
+            this.next = next;
+        }
+    }
 
     @Override
     public void add(Task task) {
@@ -31,7 +61,6 @@ public class InMemoryHistoryManager implements HistoryManager {
         Node<Task> taskNode = indexHistoryMap.get(id);
         if (taskNode != null) {
             removeNode(taskNode);
-            indexHistoryMap.remove(id);
         }
     }
 
@@ -48,7 +77,6 @@ public class InMemoryHistoryManager implements HistoryManager {
             tail = newNode;
         }
         indexHistoryMap.put(task.getId(), newNode);
-        size++;
     }
 
     public Task getHistoryTasks(Integer id) {
@@ -79,6 +107,5 @@ public class InMemoryHistoryManager implements HistoryManager {
         }
         taskNode.setNext(null);
         taskNode.setPrev(null);
-        size--;
     }
 }
