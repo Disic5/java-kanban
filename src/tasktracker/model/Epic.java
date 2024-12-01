@@ -1,4 +1,4 @@
-package task_tracker.model;
+package tasktracker.model;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,9 +11,10 @@ public class Epic extends Task {
         super(name, description);
         subTaskList = new ArrayList<>();
     }
+
     public Epic(Epic copyEpic) {
-       super(copyEpic);
-       subTaskList = new ArrayList<>(copyEpic.subTaskList);
+        super(copyEpic);
+        subTaskList = new ArrayList<>(copyEpic.subTaskList);
     }
 
 

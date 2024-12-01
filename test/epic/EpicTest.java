@@ -3,7 +3,7 @@ package epic;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import task_tracker.model.Epic;
+import tasktracker.model.Epic;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
