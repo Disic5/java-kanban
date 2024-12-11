@@ -1,7 +1,14 @@
 package tasktracker.model;
 
+import tasktracker.fileservice.TaskType;
+
 public class SubTask extends Task {
     private final Integer epicId;
+
+    public SubTask(int id, String name, String description, Progress status, Integer epicId) {
+        super(id, name, description, status);
+        this.epicId = epicId;
+    }
 
     public SubTask(String name, String description, Progress status, Integer epicId) {
         super(name, description, status);
@@ -19,13 +26,7 @@ public class SubTask extends Task {
 
     @Override
     public String toString() {
-        return "SubTask{" +
-                "id=" + getId() +
-                ", name='" + getName() + '\'' +
-                ", description='" + getDescription() + '\'' +
-                ", status= " + getStatus() + ", " +
-                "epicId=" + epicId +
-                '}' + "\n";
+        return String.format("%d,%s,%s,%s,%s,%d%n", getId(), TaskType.SUBTASK, getName(), getDescription(), getStatus(), getEpicId());
     }
 }
 

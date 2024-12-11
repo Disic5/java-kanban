@@ -1,5 +1,7 @@
 package tasktracker.model;
 
+import tasktracker.fileservice.TaskType;
+
 import java.util.Objects;
 
 public class Task {
@@ -7,6 +9,13 @@ public class Task {
     private String name;
     private String description;
     private Progress status;
+
+    public Task(Integer id, String name, String description, Progress status) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.status = status;
+    }
 
     public Task(String name, String description, Progress status) {
         this.name = name;
@@ -74,11 +83,6 @@ public class Task {
 
     @Override
     public String toString() {
-        return "Task{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                ", status=" + status +
-                '}' + "\n";
+        return String.format("%d,%s,%s,%s,%s%n", id, TaskType.TASK, name, description, status);
     }
 }

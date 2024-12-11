@@ -21,10 +21,13 @@ public class InMemoryTaskManager implements TaskManager {
 
     private final Map<Integer, Epic> epicMap = new HashMap<>();
 
-    private final HistoryManager historyManager;
+    private HistoryManager historyManager;
 
     public InMemoryTaskManager(HistoryManager historyManager) {
         this.historyManager = historyManager;
+    }
+
+    public InMemoryTaskManager() {
     }
 
     /**
@@ -92,9 +95,12 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void deleteAllEpics() {
         List<Epic> allEpics = getAllEpics();
-        for (Epic epic : allEpics) {
-            historyManager.remove(epic.getId());
+        if (historyManager != null) {
+            for (Epic epic : allEpics) {
+                historyManager.remove(epic.getId());
+            }
         }
+
         deleteAllSubTasks();
         epicMap.clear();
     }
@@ -102,7 +108,9 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void deleteEpicById(Integer id) {
         Epic epic = epicMap.remove(id);
-        historyManager.remove(id);
+        if (historyManager != null) {
+            historyManager.remove(id);
+        }
         for (SubTask subtaskId : epic.getSubTaskList()) {
             subTaskMap.remove(subtaskId.getId());
         }
@@ -221,5 +229,17 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public List<Task> getHistory() {
         return historyManager.getHistory();
+    }
+
+    public Map<Integer, Task> getTaskMap() {
+        return taskMap;
+    }
+
+    public Map<Integer, SubTask> getSubTaskMap() {
+        return subTaskMap;
+    }
+
+    public Map<Integer, Epic> getEpicMap() {
+        return epicMap;
     }
 }
