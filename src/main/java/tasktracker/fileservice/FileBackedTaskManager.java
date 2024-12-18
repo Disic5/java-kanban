@@ -31,125 +31,77 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     @Override
     public void addNewTask(Task task) {
         super.addNewTask(task);
-        try {
-            save();
-        } catch (ManagerSaveException e) {
-            throw new RuntimeException(e.getMessage());
-        }
+        save();
     }
 
     @Override
     public void updateTask(Task task) {
         super.updateTask(task);
-        try {
-            save();
-        } catch (ManagerSaveException e) {
-            throw new RuntimeException(e.getMessage());
-        }
+        save();
     }
 
     @Override
     public void deleteAllTasks() {
         super.deleteAllTasks();
-        try {
-            save();
-        } catch (ManagerSaveException e) {
-            throw new RuntimeException(e.getMessage());
-        }
+        save();
     }
 
     @Override
     public void deleteTaskById(Integer id) {
         super.deleteTaskById(id);
-        try {
-            save();
-        } catch (ManagerSaveException e) {
-            throw new RuntimeException(e.getMessage());
-        }
+        save();
     }
 
     @Override
     public void addNewEpic(Epic epic) {
         super.addNewEpic(epic);
-        try {
-            save();
-        } catch (ManagerSaveException e) {
-            throw new RuntimeException(e.getMessage());
-        }
+        save();
     }
 
     @Override
     public void updateEpic(Epic epic) {
         super.updateEpic(epic);
-        try {
-            save();
-        } catch (ManagerSaveException e) {
-            throw new RuntimeException(e.getMessage());
-        }
+        save();
     }
 
     @Override
     public void deleteEpicById(Integer id) {
         super.deleteEpicById(id);
-        try {
-            save();
-        } catch (ManagerSaveException e) {
-            throw new RuntimeException(e.getMessage());
-        }
+        save();
     }
 
     @Override
     public void deleteAllEpics() {
         super.deleteAllEpics();
-        try {
-            save();
-        } catch (ManagerSaveException e) {
-            throw new RuntimeException(e.getMessage());
-        }
+        save();
     }
 
     @Override
     public void addNewSubTask(SubTask subTask) {
         super.addNewSubTask(subTask);
-        try {
-            save();
-        } catch (ManagerSaveException e) {
-            throw new RuntimeException(e.getMessage());
-        }
+        save();
     }
 
     @Override
     public void updateSubTask(SubTask subTask) {
         super.updateSubTask(subTask);
-        try {
-            save();
-        } catch (ManagerSaveException e) {
-            throw new RuntimeException(e.getMessage());
-        }
+        save();
     }
 
     @Override
     public void deleteSubTaskById(Integer id) {
         super.deleteSubTaskById(id);
-        try {
-            save();
-        } catch (ManagerSaveException e) {
-            throw new RuntimeException(e.getMessage());
-        }
+        save();
     }
 
     @Override
     public void deleteAllSubTasks() {
         super.deleteAllSubTasks();
-        try {
-            save();
-        } catch (ManagerSaveException e) {
-            throw new RuntimeException(e.getMessage());
-        }
+        save();
     }
 
     //сохранение задач в файл
-    public void save() throws ManagerSaveException {
+    public void save() {
         if (!Files.exists(file.toPath())) {
             //пробросим исключение наше тогда будет try, catch
             throw new ManagerSaveException("Файл не найден: " + file.getName());
@@ -171,7 +123,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         }
     }
 
-    public static Task fromString(String value) throws ManagerSaveException {
+    public static Task fromString(String value) {
         String[] fields = value.split(",");
         String id = fields[0].trim();
         String type = fields[1].toUpperCase();
@@ -189,7 +141,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     //     метод будет восстанавливать данные менеджера из файла при запуске программы.
-    public static FileBackedTaskManager loadFromFile(File file) throws ManagerSaveException {
+    public static FileBackedTaskManager loadFromFile(File file) {
         FileBackedTaskManager fileManager = new FileBackedTaskManager(file);
         try {
             List<String> lines = Files.readAllLines(file.toPath());
