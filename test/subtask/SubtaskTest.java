@@ -11,7 +11,6 @@ import tasktracker.utils.Managers;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class SubtaskTest {
-
     private SubTask subTask;
     TaskManager taskManager;
 

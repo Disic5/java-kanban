@@ -83,7 +83,7 @@ class InMemoryHistoryManagerTest {
         historyManager.add(epic);
         historyManager.remove(epic.getId());
 
-        assertTrue( historyManager.getHistory().isEmpty());
+        assertTrue(historyManager.getHistory().isEmpty());
     }
 
 
@@ -116,5 +116,4 @@ class InMemoryHistoryManagerTest {
             historyManager.add(new Task(task));
         }
     }
-
 }
