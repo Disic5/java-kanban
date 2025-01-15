@@ -1,7 +1,7 @@
 package tasktracker.fileservice;
 
 import tasktracker.fileservice.exception.ManagerSaveException;
-import tasktracker.history.HistoryManager;
+import tasktracker.history.InMemoryHistoryManager;
 import tasktracker.model.Epic;
 import tasktracker.model.Progress;
 import tasktracker.model.SubTask;
@@ -13,19 +13,18 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
     private final File file;
 
-    public FileBackedTaskManager(HistoryManager historyManager, File file) {
-        super(historyManager);
-        this.file = file;
-    }
-
     public FileBackedTaskManager(File file) {
+        super(new InMemoryHistoryManager());
         this.file = file;
+
     }
 
     @Override
@@ -76,6 +75,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         save();
     }
 
+    /*todo подумать чтоб не дублировалось */
     @Override
     public void addNewSubTask(SubTask subTask) {
         super.addNewSubTask(subTask);
@@ -106,7 +106,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             //пробросим исключение наше тогда будет try, catch
             throw new ManagerSaveException("Файл не найден: " + file.getName());
         }
-        StringBuilder sB = new StringBuilder("id,type,name,status,description,epic\n");
+        StringBuilder sB = new StringBuilder("id,type,name,status,description,duration,localDateTime,epic\n");
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file.toString()))) {
             for (Task task : getAllTasks()) {
                 sB.append(task.toString());
@@ -130,12 +130,24 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         String name = fields[2].trim();
         String description = fields[3].trim();
         String status = fields[4].toUpperCase();
-        String epicId = fields.length > 5 ? fields[5] : "";
+        Duration duration = fields[5].equals("null") ? Duration.ZERO : Duration.parse(fields[5]);
+        LocalDateTime startTime = fields[6].equals("null") ? null : LocalDateTime.parse(fields[6]);
+
         return switch (type) {
-            case "TASK" -> new Task(Integer.parseInt(id), name, description, Progress.valueOf(status));
-            case "EPIC" -> new Epic(Integer.parseInt(id), name, description, Progress.valueOf(status));
-            case "SUBTASK" ->
-                    new SubTask(Integer.parseInt(id), name, description, Progress.valueOf(status), Integer.parseInt(epicId));
+
+            case "TASK" -> new Task(Integer.parseInt(id), name, description, Progress.valueOf(status),
+                    duration, startTime);
+            case "EPIC" -> new Epic(Integer.parseInt(id), name, description, Progress.valueOf(status),
+                    duration, startTime);
+            case "SUBTASK" -> {
+                if (fields.length < 8) {
+                    throw new IllegalArgumentException("Подзадача должна содержать ID эпика: " + value);
+                }
+                String epicId = fields[7];
+                yield new SubTask(Integer.parseInt(id), name, description, Progress.valueOf(status),
+                        duration, startTime, Integer.parseInt(epicId));
+            }
+//
             default -> throw new ManagerSaveException("Неизвестный тип задачи: " + type);
         };
     }

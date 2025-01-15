@@ -1,8 +1,9 @@
-package tasktracker.history;
+package service;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import tasktracker.history.HistoryManager;
 import tasktracker.model.Epic;
 import tasktracker.model.Progress;
 import tasktracker.model.SubTask;
@@ -85,7 +86,6 @@ class InMemoryHistoryManagerTest {
 
         assertTrue(historyManager.getHistory().isEmpty());
     }
-
 
     @DisplayName("История не ограничена размером")
     @Test

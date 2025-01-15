@@ -1,10 +1,12 @@
-id,type,name,status,description,epic
-1,TASK,Task,task-descr-1,NEW
-2,TASK,Task,task-descr-2,NEW
-3,TASK,Task,task-descr-3,NEW
-4,EPIC,Epic,epic-descr 1,NEW
-5,EPIC,Epic,epic-descr 2,NEW
-6,EPIC,Epic,epic-descr 3,IN_PROGRESS
-7,SUBTASK,Subtask,sub-descr 3,NEW,6
-8,SUBTASK,Subtask,sub-descr 3,NEW,6
-9,SUBTASK,Subtask,sub-descr 3,DONE,6
+id,type,name,status,description,duration,localDateTime,epic
+1,TASK,Task,task-descr-1,NEW,PT30M,2025-11-11T10:00
+2,TASK,Task,task-descr-2,NEW,PT1H,2025-11-12T11:00
+3,TASK,Task,task-descr-3,NEW,PT1H40M,2025-11-11T12:00
+4,TASK,Task,task-descr-4,NEW,PT1H30M,2025-11-11T13:00
+5,EPIC,Epic,epic-descr 1,NEW,null,null
+6,EPIC,Epic,epic-descr 2,NEW,PT2H,2025-11-15T10:00
+7,EPIC,Epic,epic-descr 3,NEW,PT2H,2025-11-17T11:00
+8,SUBTASK,Subtask,sub-descr 3,NEW,PT1H,2025-11-15T10:00,6
+9,SUBTASK,Subtask,sub-descr 4,NEW,PT1H,2025-11-16T10:00,6
+10,SUBTASK,Subtask,sub-descr 5,NEW,PT1H,2025-11-17T11:00,7
+11,SUBTASK,Subtask,sub-descr 6,NEW,PT1H,2025-11-18T11:00,7
