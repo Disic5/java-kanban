@@ -33,7 +33,7 @@ public class Main {
         Task task3 = new Task("Task", "task-descr-3", Progress.NEW, Duration.ofMinutes(100),
                 LocalDateTime.of(2025, 11, 11, 12, 0));
         Task task4 = new Task("Task", "task-descr-4", Progress.NEW, Duration.ofMinutes(90),
-                LocalDateTime.of(2025, 11, 11, 13, 0));
+                LocalDateTime.of(2025, 11, 14, 13, 0));
 
         /**
          * Task
@@ -95,7 +95,7 @@ public class Main {
         fileManager.addNewSubTask(subTask5);
         fileManager.addNewSubTask(subTask6);
         fileManager.addNewSubTask(subTask7);
-//        fileManager.addNewSubTask(subTask8);
+        fileManager.addNewSubTask(subTask8);
 
         taskManager.addNewSubTask(subTask4);
         taskManager.addNewSubTask(subTask5);

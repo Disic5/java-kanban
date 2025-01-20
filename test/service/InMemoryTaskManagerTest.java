@@ -192,7 +192,8 @@ class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
     @DisplayName("Поля нельзя изменять после создания")
     @Test
     void testTaskFieldsImmutability() {
-        Task task = new Task("Исходная задача", "Описание");
+        Task task = new Task(1, "Исходная задача", "Описание", IN_PROGRESS, Duration.ofMinutes(30), LocalDateTime.now());
+        task.setId(1);
         taskManager.addNewTask(task);
 
         Task storedTask = taskManager.getTaskById(task.getId());
@@ -206,10 +207,10 @@ class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
     @DisplayName("Задачи с разными ID не должны конфликтовать ")
     @Test
     void testGeneratedAndSpecifiedIdTasksConflict() {
-        Task generatedTask = new Task("Генерируемая задача", "Описание");
+        Task generatedTask = new Task(1, "Генерируемая задача", "Описание", IN_PROGRESS, Duration.ofMinutes(30), LocalDateTime.now());
         taskManager.addNewTask(generatedTask);
 
-        Task specifiedTask = new Task("Задача с ID", "Описание");
+        Task specifiedTask = new Task(1, "Задача с ID", "Описание", IN_PROGRESS, Duration.ofMinutes(30), LocalDateTime.now().plusHours(1));
         specifiedTask.setId(generatedTask.getId());
         taskManager.addNewTask(specifiedTask);
 
@@ -252,17 +253,6 @@ class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
         assertEquals(IN_PROGRESS, epic.getStatus(), "Все подзадачи IN_PROGRESS - статус эпика должен быть IN_PROGRESS");
     }
 
-    @DisplayName("Задачи пересекаются по времени")
-    @Test
-    void validateOverlapping_whenTaskIsOverlapping_ShouldReturnTrue() {
-        Task task = new Task(1, "Task", "Description", NEW, Duration.ofMinutes(30), LocalDateTime.now());
-        Task task2 = new Task(2, "Test", "Test", NEW, Duration.ofMinutes(30), LocalDateTime.now());
-        taskManager.getSortedTaskSet().add(task);
-        taskManager.getSortedTaskSet().add(task2);
-        boolean result = taskManager.validateOverlapping(task2);
-        assertTrue(result);
-    }
-
     @DisplayName("Пересекающиеся задачи не должны сохраняться")
     @Test
     void testTaskIntervalsOverlap() {
@@ -276,7 +266,7 @@ class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
         // Проверяем, что сохранение вызывает исключение
         assertThrows(IllegalArgumentException.class, () -> taskManager.addNewTask(task2),
                 "Пересекающиеся задачи не должны сохраняться.");
-        assertEquals(1, taskManager.getSortedTaskSet().size());
+        assertEquals(1, taskManager.getPrioritizedTasks().size());
 
         // Проверка подзадач
         Epic epic = new Epic(1, "Epic", "Description", NEW, Duration.ZERO, null);
@@ -289,6 +279,6 @@ class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
         assertThrows(IllegalArgumentException.class, () -> taskManager.addNewSubTask(subtask2),
                 "Пересекающиеся подзадачи не должны сохраняться.");
 
-        assertEquals(2, taskManager.getSortedTaskSet().size());
+        assertEquals(2, taskManager.getPrioritizedTasks().size());
     }
 }

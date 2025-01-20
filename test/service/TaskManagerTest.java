@@ -34,6 +34,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     @Test
     void addNewTask_whenTaskIsValid_shouldAddSuccessfully() {
         Task task = new Task("Task", "Description", NEW, Duration.ofMinutes(30), LocalDateTime.now());
+        task.setId(1);
         taskManager.addNewTask(task);
         assertEquals(task, taskManager.getTaskById(task.getId()));
     }
@@ -212,8 +213,8 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     private void initializeAndAddTasks() {
-        Task task = new Task("Task", "Description", NEW, Duration.ofMinutes(30), LocalDateTime.now());
-        Task task2 = new Task("Task", "Description", NEW, Duration.ofMinutes(30), LocalDateTime.now().plusHours(1));
+        Task task = new Task(1, "Task", "Description", NEW, Duration.ofMinutes(30), LocalDateTime.now());
+        Task task2 = new Task(2, "Task", "Description", NEW, Duration.ofMinutes(30), LocalDateTime.now().plusHours(1));
         taskManager.addNewTask(task);
         taskManager.addNewTask(task2);
     }

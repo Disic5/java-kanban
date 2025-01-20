@@ -36,15 +36,15 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void addNewTask(Task task) {
-        task.setId(++idCounter);
-        taskMap.put(task.getId(), task);
         if (task.getStartTime() == null) {
             return;
         }
         if (validateOverlapping(task)) {
             throw new IllegalArgumentException("Задачи пересекается по времени");
         }
+        task.setId(++idCounter);
         sortedTaskSet.add(task);
+        taskMap.put(task.getId(), task);
     }
 
     @Override
@@ -65,7 +65,7 @@ public class InMemoryTaskManager implements TaskManager {
             sortedTaskSet.remove(oldTask);
             if (validateOverlapping(task)) {
                 sortedTaskSet.add(oldTask);
-                System.out.println("Задача пересекается с существующими id = " + task.getId());
+                throw new IllegalArgumentException("Задачи пересекается по времени");
             } else {
                 sortedTaskSet.add(task);
                 System.out.println("Задача обновлена");
@@ -101,14 +101,11 @@ public class InMemoryTaskManager implements TaskManager {
      */
     @Override
     public void addNewEpic(Epic epic) {
-        epic.setId(++idCounter);
-        epicMap.put(epic.getId(), epic);
         if (validateOverlapping(epic)) {
             throw new IllegalArgumentException("Эпики пересекается по времени");
         }
-        if (epic.getStartTime() != null) {
-            sortedTaskSet.add(epic);
-        }
+        epic.setId(++idCounter);
+        epicMap.put(epic.getId(), epic);
     }
 
     @Override
@@ -196,14 +193,14 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void addNewSubTask(SubTask subTask) {
         if (epicMap.containsKey(subTask.getEpicId())) {
-            subTask.setId(++idCounter);
-            subTaskMap.put(subTask.getId(), subTask);
             if (validateOverlapping(subTask)) {
                 throw new IllegalArgumentException("Подзадачи пересекается по времени");
             }
             if (subTask.getStartTime() != null) {
                 sortedTaskSet.add(subTask);
             }
+            subTask.setId(++idCounter);
+            subTaskMap.put(subTask.getId(), subTask);
             Epic epic = epicMap.get(subTask.getEpicId());
             epic.addSubTask(subTask);
             sortedTaskSet.remove(epic);
@@ -238,7 +235,7 @@ public class InMemoryTaskManager implements TaskManager {
             sortedTaskSet.remove(oldSubtask);
             if (validateOverlapping(subTask)) {
                 sortedTaskSet.add(oldSubtask);
-                System.out.println("Subtask пересекается с существующими id = " + subTask.getId());
+                throw new IllegalArgumentException("Подзадачи пересекается по времени");
             } else {
                 sortedTaskSet.add(subTask);
                 Epic oldEpic = epicMap.get(oldSubtask.getEpicId());
@@ -291,8 +288,8 @@ public class InMemoryTaskManager implements TaskManager {
 
     // отсортировать по времени startTime через TreeSet
     @Override
-    public void getPrioritizedTasks() {
-        sortedTaskSet.forEach(System.out::println);
+    public List<Task> getPrioritizedTasks() {
+        return new ArrayList<>(sortedTaskSet);
     }
 
     public Map<Integer, Task> getTaskMap() {
@@ -305,9 +302,5 @@ public class InMemoryTaskManager implements TaskManager {
 
     public Map<Integer, Epic> getEpicMap() {
         return epicMap;
-    }
-
-    public Set<Task> getSortedTaskSet() {
-        return sortedTaskSet;
     }
 }

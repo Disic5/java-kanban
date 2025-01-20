@@ -11,8 +11,7 @@ import java.util.Objects;
 public class Epic extends Task {
 
     private final List<SubTask> subTaskList;
-    private Duration duration;
-    private LocalDateTime startTime;
+
     private LocalDateTime endTime;
 
 
@@ -74,13 +73,24 @@ public class Epic extends Task {
                 .min(LocalDateTime::compareTo)
                 .orElse(null);
 
+        endTime = subTaskList.stream()
+                .map(SubTask::getEndTime)
+                .filter(Objects::nonNull)
+                .max(LocalDateTime::compareTo)
+                .orElse(null);
+
         setDuration(duration);
         setStartTime(startTime);
+        setEndTime(endTime);
 
     }
 
     public void addSubTask(SubTask subTask) {
         subTaskList.add(subTask);
+    }
+
+    public void setEndTime(LocalDateTime endTime) {
+        this.endTime = endTime;
     }
 
     @Override

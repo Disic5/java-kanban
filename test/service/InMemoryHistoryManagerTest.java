@@ -11,6 +11,8 @@ import tasktracker.model.Task;
 import tasktracker.service.TaskManager;
 import tasktracker.utils.Managers;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -28,7 +30,7 @@ class InMemoryHistoryManagerTest {
     void setUp() {
         historyManager = Managers.getDefaultHistory();
         taskManager = Managers.getDefault();
-        task = new Task("Test", "Test", NEW);
+        task = new Task("Test", "Test", NEW, Duration.ofMinutes(30), LocalDateTime.now());
         epic = new Epic("Test", "test");
         subTask = new SubTask("Test", "test", Progress.NEW, 1);
     }
@@ -36,6 +38,7 @@ class InMemoryHistoryManagerTest {
     @DisplayName("Успешное добавление истории при вызову getId()")
     @Test
     void getHistory_whenCallTaskById_shouldAddToHistory() {
+        task.setId(1);
         taskManager.addNewEpic(epic);
         taskManager.addNewSubTask(subTask);
         taskManager.addNewTask(task);

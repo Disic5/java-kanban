@@ -11,8 +11,8 @@ public class Task {
     private String name;
     private String description;
     private Progress status;
-    private Duration duration;
-    private LocalDateTime startTime;
+    protected Duration duration;
+    protected LocalDateTime startTime;
 
     public Task(Integer id, String name, String description, Progress status, Duration duration, LocalDateTime startTime) {
         this.id = id;
@@ -60,6 +60,9 @@ public class Task {
     }
 
     public LocalDateTime getEndTime() {
+        if (startTime == null || duration == null) {
+            return null;
+        }
         return startTime.plus(duration);
     }
 
@@ -67,6 +70,7 @@ public class Task {
         if (t1.getStartTime() == null && t2.getStartTime() == null) return Integer.compare(t1.getId(), t2.getId());
         if (t1.getStartTime() == null) return 1;
         if (t2.getStartTime() == null) return -1;
+
 
         int dateComparison = t1.getStartTime().compareTo(t2.getStartTime());
         if (dateComparison != 0) {
@@ -131,6 +135,7 @@ public class Task {
     public void setStartTime(LocalDateTime startTime) {
         this.startTime = startTime;
     }
+
 
     @Override
     public boolean equals(Object o) {
