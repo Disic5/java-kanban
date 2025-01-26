@@ -10,7 +10,7 @@ import java.util.Objects;
 
 public class Epic extends Task {
 
-    private final List<SubTask> subTaskList;
+    private List<SubTask> subTaskList;
 
     private LocalDateTime endTime;
 
@@ -42,7 +42,7 @@ public class Epic extends Task {
 
     public Epic(Epic copyEpic) {
         super(copyEpic);
-        subTaskList = new ArrayList<>(copyEpic.subTaskList);
+        subTaskList = copyEpic.subTaskList;
         duration = copyEpic.duration;
         startTime = copyEpic.startTime;
         endTime = copyEpic.endTime;
@@ -86,6 +86,9 @@ public class Epic extends Task {
     }
 
     public void addSubTask(SubTask subTask) {
+        if (subTaskList == null) {
+            subTaskList = new ArrayList<>();
+        }
         subTaskList.add(subTask);
     }
 

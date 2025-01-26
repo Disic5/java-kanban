@@ -38,12 +38,12 @@ class InMemoryHistoryManagerTest {
     @DisplayName("Успешное добавление истории при вызову getId()")
     @Test
     void getHistory_whenCallTaskById_shouldAddToHistory() {
-        task.setId(1);
         taskManager.addNewEpic(epic);
         taskManager.addNewSubTask(subTask);
         taskManager.addNewTask(task);
         taskManager.getTaskById(task.getId());
         taskManager.getTaskById(task.getId());
+        taskManager.getEpicById(epic.getId());
         taskManager.getEpicById(epic.getId());
         taskManager.getEpicById(epic.getId());
         taskManager.getSubTaskById(subTask.getId());

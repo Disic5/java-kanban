@@ -5,11 +5,12 @@ import tasktracker.model.SubTask;
 import tasktracker.model.Task;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface TaskManager {
     void addNewTask(Task task);
 
-    Task getTaskById(Integer id);
+    Optional<Task> getTaskById(Integer id);
 
     void updateTask(Task task);
 
@@ -29,7 +30,7 @@ public interface TaskManager {
 
     List<Epic> getAllEpics();
 
-    Epic getEpicById(Integer id);
+    Optional<Epic> getEpicById(Integer id);
 
     void updateEpicStatus(Epic epic);
 
@@ -37,7 +38,7 @@ public interface TaskManager {
 
     List<SubTask> getAllSubtaskByEpic(Integer id);
 
-    SubTask getSubTaskById(Integer id);
+    Optional<SubTask> getSubTaskById(Integer id);
 
     void updateSubTask(SubTask subTask);
 

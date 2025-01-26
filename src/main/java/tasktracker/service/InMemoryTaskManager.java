@@ -1,5 +1,6 @@
 package tasktracker.service;
 
+import tasktracker.exeption.NotFoundException;
 import tasktracker.history.HistoryManager;
 import tasktracker.model.Epic;
 import tasktracker.model.SubTask;
@@ -42,18 +43,20 @@ public class InMemoryTaskManager implements TaskManager {
         if (validateOverlapping(task)) {
             throw new IllegalArgumentException("Задачи пересекается по времени");
         }
-        task.setId(++idCounter);
+        if (task.getId() == null) {
+            task.setId(++idCounter);
+        }
         sortedTaskSet.add(task);
         taskMap.put(task.getId(), task);
     }
 
     @Override
-    public Task getTaskById(Integer id) {
+    public Optional<Task> getTaskById(Integer id) {
         if (id != null && taskMap.containsKey(id)) {
             historyManager.add(new Task(taskMap.get(id)));
-            return new Task(taskMap.get(id));
+            return Optional.ofNullable(taskMap.get(id));
         } else {
-            throw new IllegalArgumentException("task not found with id = " + id);
+            throw new NotFoundException("task not found with id = " + id);
         }
     }
 
@@ -104,7 +107,10 @@ public class InMemoryTaskManager implements TaskManager {
         if (validateOverlapping(epic)) {
             throw new IllegalArgumentException("Эпики пересекается по времени");
         }
-        epic.setId(++idCounter);
+        if (epic.getId() == null) {
+            epic.setId(++idCounter);
+        }
+        sortedTaskSet.add(epic);
         epicMap.put(epic.getId(), epic);
     }
 
@@ -122,7 +128,7 @@ public class InMemoryTaskManager implements TaskManager {
                 System.out.println("Эпик обновлен");
             }
         } else {
-            throw new IllegalArgumentException("epic not found with id = " + epic.getId());
+            throw new NotFoundException("epic not found with id = " + epic.getId());
         }
     }
 
@@ -158,12 +164,12 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public Epic getEpicById(Integer id) {
+    public Optional<Epic> getEpicById(Integer id) {
         if (id != null && epicMap.containsKey(id)) {
             historyManager.add(new Epic(epicMap.get(id)));
-            return new Epic(epicMap.get(id));
+            return Optional.ofNullable(epicMap.get(id));
         } else {
-            throw new IllegalArgumentException("epic not found with id = " + id);
+            throw new NotFoundException("epic not found with id = " + id);
         }
     }
 
@@ -193,13 +199,16 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void addNewSubTask(SubTask subTask) {
         if (epicMap.containsKey(subTask.getEpicId())) {
+
             if (validateOverlapping(subTask)) {
                 throw new IllegalArgumentException("Подзадачи пересекается по времени");
             }
             if (subTask.getStartTime() != null) {
                 sortedTaskSet.add(subTask);
             }
-            subTask.setId(++idCounter);
+            if (subTask.getId() == null) {
+                subTask.setId(++idCounter);
+            }
             subTaskMap.put(subTask.getId(), subTask);
             Epic epic = epicMap.get(subTask.getEpicId());
             epic.addSubTask(subTask);
@@ -208,6 +217,8 @@ public class InMemoryTaskManager implements TaskManager {
                 sortedTaskSet.add(epic);
             }
             updateEpicStatus(epic);
+        } else {
+            throw new NotFoundException("subTask cannot add without epicId not found epicId = " + subTask.getEpicId());
         }
     }
 
@@ -218,12 +229,12 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public SubTask getSubTaskById(Integer id) {
+    public Optional<SubTask> getSubTaskById(Integer id) {
         if (id != null && subTaskMap.containsKey(id)) {
             historyManager.add(new SubTask(subTaskMap.get(id)));
-            return new SubTask(subTaskMap.get(id));
+            return Optional.ofNullable(subTaskMap.get(id));
         } else {
-            throw new IllegalArgumentException("subtask not found with id = " + id);
+            throw new NotFoundException("subtask not found with id = " + id);
         }
     }
 
@@ -252,9 +263,8 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void deleteSubTaskById(Integer id) {
         SubTask subtask = subTaskMap.remove(id);
-        SubTask existSubtask = subTaskMap.get(id);
         historyManager.remove(id);
-        sortedTaskSet.remove(existSubtask);
+        sortedTaskSet.remove(subtask);
         if (subtask == null) {
             return;
         }
@@ -286,7 +296,6 @@ public class InMemoryTaskManager implements TaskManager {
         return historyManager.getHistory();
     }
 
-    // отсортировать по времени startTime через TreeSet
     @Override
     public List<Task> getPrioritizedTasks() {
         return new ArrayList<>(sortedTaskSet);
