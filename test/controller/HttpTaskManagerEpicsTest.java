@@ -162,7 +162,7 @@ public class HttpTaskManagerEpicsTest {
                 .POST(HttpRequest.BodyPublishers.ofString(taskJson))
                 .build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        assertEquals(400, response.statusCode());
+        assertEquals(404, response.statusCode());
 
         List<Epic> allEpics = taskManager.getAllEpics();
         assertTrue(allEpics.isEmpty());

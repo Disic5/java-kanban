@@ -164,7 +164,7 @@ public class HttpTaskManagerTasksTest {
                 .POST(HttpRequest.BodyPublishers.ofString(taskJson))
                 .build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        assertEquals(400, response.statusCode());
+        assertEquals(404, response.statusCode());
 
         List<Task> allTasks = taskManager.getAllTasks();
         assertTrue(allTasks.isEmpty());

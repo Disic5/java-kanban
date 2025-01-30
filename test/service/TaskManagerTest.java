@@ -11,7 +11,6 @@ import tasktracker.service.TaskManager;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static tasktracker.model.Progress.*;
@@ -37,10 +36,10 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         Task task = new Task("Task", "Description", NEW, Duration.ofMinutes(30), LocalDateTime.now());
         task.setId(1);
         taskManager.addNewTask(task);
-        Optional<Task> taskOptional = taskManager.getTaskById(task.getId());
+        Task taskOptional = taskManager.getTaskById(task.getId());
 
-        assertTrue(taskOptional.isPresent());
-        assertEquals(task, taskOptional.get());
+//        assertTrue(taskOptional.isPresent());
+        assertEquals(task, taskOptional);
     }
 
     @DisplayName("Успешное обновление задачи")
@@ -51,10 +50,10 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         task.setDescription("Updated Task");
         task.setStatus(IN_PROGRESS);
         taskManager.updateTask(task);
-        Optional<Task> taskById = taskManager.getTaskById(task.getId());
+        Task taskById = taskManager.getTaskById(task.getId());
 
-        assertTrue(taskById.isPresent());
-        assertEquals("Updated Task", taskById.get().getDescription());
+//        assertTrue(taskById.isPresent());
+        assertEquals("Updated Task", taskById.getDescription());
     }
 
     @DisplayName("Успешное удаление задачи по id синхронно с историей")
@@ -87,9 +86,9 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     void addNewEpic_whenTaskIsValid_shouldAddSuccessfully() {
         Epic epic = new Epic("Epic", "Description", NEW, Duration.ofMinutes(30), LocalDateTime.now());
         taskManager.addNewEpic(epic);
-        Optional<Epic> epicOptional = taskManager.getEpicById(epic.getId());
-        assertTrue(epicOptional.isPresent());
-        assertEquals(epic, epicOptional.get());
+        Epic epicOptional = taskManager.getEpicById(epic.getId());
+//        assertTrue(epicOptional.isPresent());
+        assertEquals(epic, epicOptional);
     }
 
     @DisplayName("Успешное обновление Epic")
@@ -99,9 +98,9 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         taskManager.addNewEpic(epic);
         epic.setDescription("update epic");
         taskManager.updateEpic(epic);
-        Optional<Epic> updatedEpic = taskManager.getEpicById(1);
-        assertTrue(updatedEpic.isPresent());
-        assertEquals("update epic", updatedEpic.get().getDescription());
+        Epic updatedEpic = taskManager.getEpicById(1);
+//        assertTrue(updatedEpic.isPresent());
+        assertEquals("update epic", updatedEpic.getDescription());
     }
 
     @DisplayName("Успешное обновление статуса у Epic на статус IN_PROGRESS")
@@ -169,11 +168,11 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         SubTask subTask = new SubTask(1, "SubTask", "Description", NEW, Duration.ofMinutes(30), LocalDateTime.now().plusHours(1), 1);
         taskManager.addNewEpic(epic);
         taskManager.addNewSubTask(subTask);
-        Optional<SubTask> savedSubTask = taskManager.getSubTaskById(subTask.getId());
+        SubTask savedSubTask = taskManager.getSubTaskById(subTask.getId());
 
-        assertTrue(savedSubTask.isPresent());
+//        assertTrue(savedSubTask.isPresent());
         assertNotNull(savedSubTask, "Подзадача не найдена.");
-        assertEquals(subTask, savedSubTask.get(), "Подзадачи не совпадают.");
+        assertEquals(subTask, savedSubTask, "Подзадачи не совпадают.");
 
         final List<SubTask> subTasks = taskManager.getAllSubTasks();
 
@@ -195,10 +194,10 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         subTask.setStartTime(LocalDateTime.now().plusHours(2));
 
         taskManager.updateSubTask(subTask);
-        Optional<SubTask> subTaskById = taskManager.getSubTaskById(1);
+        SubTask subTaskById = taskManager.getSubTaskById(1);
 
-        assertTrue(subTaskById.isPresent());
-        assertEquals(subTask.getStartTime(), subTaskById.get().getStartTime());
+//        assertTrue(subTaskById.isPresent());isPresent
+        assertEquals(subTask.getStartTime(), subTaskById.getStartTime());
     }
 
     @DisplayName("Успешное удаление подзадачи по id синхронно с историей")

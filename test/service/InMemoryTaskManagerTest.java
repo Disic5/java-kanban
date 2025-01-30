@@ -12,7 +12,6 @@ import tasktracker.service.InMemoryTaskManager;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static tasktracker.model.Progress.*;
@@ -31,10 +30,10 @@ class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
         Task task = new Task(1, "Task", "Description", NEW, Duration.ofMinutes(30), LocalDateTime.of(2025, 1, 1, 0, 0));
         taskManager.addNewTask(task);
 
-        Optional<Task> taskById = taskManager.getTaskById(task.getId());
+        Task taskById = taskManager.getTaskById(task.getId());
 
-        assertTrue(taskById.isPresent());
-        assertEquals(task, taskById.get(), "Задача должна быть доступна по ID");
+//        assertTrue(taskById.isPresent());
+        assertEquals(task, taskById, "Задача должна быть доступна по ID");
     }
 
     @DisplayName("Не удалось найти задачу по id")
@@ -45,8 +44,8 @@ class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
 
         assertThrows(NotFoundException.class,
                 () -> {
-                    Optional<Task> taskById = taskManager.getTaskById(id);
-                    if (taskById.isEmpty()) {
+                    Task taskById = taskManager.getTaskById(id);
+                    if (taskById == null) {
                         throw new NotFoundException("task not found with id = " + id);
                     }
                 });
@@ -90,11 +89,11 @@ class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
         Epic epic = new Epic("Epic", "Description", NEW, Duration.ofMinutes(30), LocalDateTime.now());
         epic.setId(1);
         taskManager.addNewEpic(epic);
-        Optional<Epic> epicById = taskManager.getEpicById(epic.getId());
+        Epic epicById = taskManager.getEpicById(epic.getId());
 
-        assertTrue(epicById.isPresent(), "epic not found.");
+//        assertTrue(epicById.isPresent(), "epic not found.");
         assertNotNull(epicById, "Epic не найден");
-        assertEquals(epic, epicById.get(), "Epic не совпадают.");
+        assertEquals(epic, epicById, "Epic не совпадают.");
     }
 
     @DisplayName("Не удалось найти Epic по id")
@@ -163,11 +162,11 @@ class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
         SubTask subTask = new SubTask(1, "SubTask", "Description", NEW, Duration.ofMinutes(30), LocalDateTime.of(2025, 1, 1, 10, 0), 1);
         taskManager.addNewEpic(epic);
         taskManager.addNewSubTask(subTask);
-        Optional<SubTask> subTaskById = taskManager.getSubTaskById(subTask.getId());
+        SubTask subTaskById = taskManager.getSubTaskById(subTask.getId());
 
-        assertTrue(subTaskById.isPresent(), "subTask not found.");
+//        assertTrue(subTaskById.isPresent(), "subTask not found.");
         assertNotNull(subTaskById);
-        assertEquals(subTask, subTaskById.get());
+        assertEquals(subTask, subTaskById);
     }
 
     @DisplayName("Не удалось найти подзадачу по id")
@@ -205,9 +204,8 @@ class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
         Task task = new Task(1, "Исходная задача", "Описание", IN_PROGRESS, Duration.ofMinutes(30), LocalDateTime.now());
         taskManager.addNewTask(task);
         String taskName = task.getName();
-        Optional<Task> taskById = taskManager.getTaskById(task.getId());
-        assertTrue(taskById.isPresent());
-        Task renamed = taskById.get();
+        //        assertTrue(taskById.isPresent());
+        Task renamed = taskManager.getTaskById(task.getId());
         renamed.setName("Измененное имя");
 
         assertNotEquals(renamed.getName(), taskName,

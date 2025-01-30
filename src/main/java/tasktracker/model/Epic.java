@@ -49,6 +49,9 @@ public class Epic extends Task {
     }
 
     public List<SubTask> getSubTaskList() {
+        if (subTaskList == null) {
+            subTaskList = new ArrayList<>();
+        }
         recalculateDurationAndTime();
         return subTaskList;
     }
