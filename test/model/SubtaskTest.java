@@ -3,6 +3,7 @@ package model;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import tasktracker.exeption.NotFoundException;
 import tasktracker.model.Progress;
 import tasktracker.model.SubTask;
 import tasktracker.service.TaskManager;
@@ -35,8 +36,7 @@ public class SubtaskTest {
     @Test
     void addSubtask_putSubtaskWithoutEpic_shouldBeFailed() {
         subTask.setId(1);
-        taskManager.addNewSubTask(subTask);
-
+        assertThrows(NotFoundException.class, () -> taskManager.addNewSubTask(subTask));
         assertTrue(taskManager.getAllSubTasks().isEmpty());
     }
 }

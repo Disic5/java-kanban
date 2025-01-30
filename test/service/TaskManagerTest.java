@@ -36,7 +36,10 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         Task task = new Task("Task", "Description", NEW, Duration.ofMinutes(30), LocalDateTime.now());
         task.setId(1);
         taskManager.addNewTask(task);
-        assertEquals(task, taskManager.getTaskById(task.getId()));
+        Task taskOptional = taskManager.getTaskById(task.getId());
+
+//        assertTrue(taskOptional.isPresent());
+        assertEquals(task, taskOptional);
     }
 
     @DisplayName("Успешное обновление задачи")
@@ -47,8 +50,9 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         task.setDescription("Updated Task");
         task.setStatus(IN_PROGRESS);
         taskManager.updateTask(task);
-        Task taskById = taskManager.getTaskById(1);
+        Task taskById = taskManager.getTaskById(task.getId());
 
+//        assertTrue(taskById.isPresent());
         assertEquals("Updated Task", taskById.getDescription());
     }
 
@@ -82,7 +86,9 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     void addNewEpic_whenTaskIsValid_shouldAddSuccessfully() {
         Epic epic = new Epic("Epic", "Description", NEW, Duration.ofMinutes(30), LocalDateTime.now());
         taskManager.addNewEpic(epic);
-        assertEquals(epic, taskManager.getEpicById(epic.getId()));
+        Epic epicOptional = taskManager.getEpicById(epic.getId());
+//        assertTrue(epicOptional.isPresent());
+        assertEquals(epic, epicOptional);
     }
 
     @DisplayName("Успешное обновление Epic")
@@ -93,7 +99,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         epic.setDescription("update epic");
         taskManager.updateEpic(epic);
         Epic updatedEpic = taskManager.getEpicById(1);
-
+//        assertTrue(updatedEpic.isPresent());
         assertEquals("update epic", updatedEpic.getDescription());
     }
 
@@ -164,6 +170,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         taskManager.addNewSubTask(subTask);
         SubTask savedSubTask = taskManager.getSubTaskById(subTask.getId());
 
+//        assertTrue(savedSubTask.isPresent());
         assertNotNull(savedSubTask, "Подзадача не найдена.");
         assertEquals(subTask, savedSubTask, "Подзадачи не совпадают.");
 
@@ -177,21 +184,29 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     @DisplayName("Успешное обновление подзадачи")
     @Test
     void updateSubTask_whenPutNewSubTask_shouldBeUpdated() {
-        SubTask subTask = new SubTask(1, "SubTask", "Description", NEW, Duration.ofMinutes(30), LocalDateTime.now(), 1);
+        Epic epic = new Epic(1, "epic", "Description", NEW, Duration.ofMinutes(30), LocalDateTime.now());
+        SubTask subTask = new SubTask(1, "SubTask", "Description", NEW, Duration.ofMinutes(30), LocalDateTime.now().plusHours(1), 1);
+        taskManager.addNewEpic(epic);
         taskManager.addNewSubTask(subTask);
-        subTask.setId(1);
+
         subTask.setStatus(IN_PROGRESS);
         subTask.setDescription("Updated SubTask");
+        subTask.setStartTime(LocalDateTime.now().plusHours(2));
+
         taskManager.updateSubTask(subTask);
         SubTask subTaskById = taskManager.getSubTaskById(1);
 
-        assertEquals("Updated SubTask", subTaskById.getDescription());
+//        assertTrue(subTaskById.isPresent());isPresent
+        assertEquals(subTask.getStartTime(), subTaskById.getStartTime());
     }
 
     @DisplayName("Успешное удаление подзадачи по id синхронно с историей")
     @Test
     void deleteSubTaskById_whenSubTaskIsExist_shouldDeleteId() {
         SubTask subTask = new SubTask(1, "SubTask", "Description", NEW, Duration.ofMinutes(30), LocalDateTime.now(), 1);
+        Epic epic = new Epic(1, "epic", "Description", NEW, Duration.ofMinutes(30), LocalDateTime.now().plusHours(1));
+
+        taskManager.addNewEpic(epic);
         taskManager.addNewSubTask(subTask);
         taskManager.deleteSubTaskById(subTask.getId());
 
@@ -203,7 +218,9 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     @Test
     void deleteAllSubTasks_shouldDeleteAllSubTask() {
         SubTask subTask = new SubTask(1, "SubTask", "Description", NEW, Duration.ofMinutes(30), LocalDateTime.now(), 1);
-        SubTask subTask2 = new SubTask(2, "SubTask", "Description", NEW, Duration.ofMinutes(30), LocalDateTime.now(), 1);
+        SubTask subTask2 = new SubTask(2, "SubTask", "Description", NEW, Duration.ofMinutes(30), LocalDateTime.now().plusMinutes(30), 1);
+        Epic epic = new Epic(1, "epic", "Description", NEW, Duration.ofMinutes(30), LocalDateTime.now().plusHours(2));
+        taskManager.addNewEpic(epic);
         taskManager.addNewSubTask(subTask);
         taskManager.addNewSubTask(subTask2);
         taskManager.deleteAllSubTasks();
